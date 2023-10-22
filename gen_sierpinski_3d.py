@@ -2,6 +2,7 @@ import bpy
 import math
 import mathutils
 
+
 def create_tetrahedron(v0, v1, v2, v3, depth, scale):
     if depth == 0:
         vertices = [v0, v1, v2, v3]
@@ -31,6 +32,7 @@ def create_tetrahedron(v0, v1, v2, v3, depth, scale):
     create_tetrahedron(mid02, mid12, v2, mid23, depth - 1, scale)
     create_tetrahedron(mid03, mid13, mid23, v3, depth - 1, scale)
 
+
 # Define the Sierpinski 3D Generator Operator
 class Sierpinski3DGeneratorOperator(bpy.types.Operator):
     bl_idname = "mesh.sierpinski_3d_generator"
@@ -53,10 +55,6 @@ class Sierpinski3DGeneratorOperator(bpy.types.Operator):
         default=1.0
     )
 
-    def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=400)
-
     def execute(self, context):
         # Define the vertices of an initial tetrahedron
         v0 = (0, 0, 1 * self.scale)
@@ -76,33 +74,19 @@ class Sierpinski3DGeneratorOperator(bpy.types.Operator):
         layout.prop(self, "scale")
 
 
-# Define the Sierpinski 3D Generator Menu
-class Sierpinski3DGeneratorMenu(bpy.types.Menu):
-    bl_idname = "Sierpinski3DGeneratorMenu"
-    bl_label = "Sierpinski 3D Generator Menu"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # Add your custom properties here
-        layout.operator(Sierpinski3DGeneratorOperator.bl_idname)
-
-
-# Register and add to the "add mesh" menu (required to use F3 search "Generate Sierpinski 3D" for quick access).
+# Register and add to the "add mesh" menu.
 def register():
     bpy.utils.register_class(Sierpinski3DGeneratorOperator)
-    bpy.utils.register_class(Sierpinski3DGeneratorMenu)
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
-    bpy.utils.unregister_class(Sierpinski3DGeneratorMenu)
     bpy.utils.unregister_class(Sierpinski3DGeneratorOperator)
 
 
 def menu_func(self, context):
     layout = self.layout
-    layout.menu(Sierpinski3DGeneratorMenu.bl_idname)
+    layout.operator(Sierpinski3DGeneratorOperator.bl_idname)
 
 
 if __name__ == "__main__":
